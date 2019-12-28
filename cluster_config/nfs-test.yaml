@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    name: mypod
+spec:
+  nodeSelector:
+    name: "master1"
+  containers:
+  - name: mypod
+    image: zhangwendi/busybox:latest
+    args:
+    - /bin/sh
+    - -c
+    - tail -f /tmp/123.txt
+    volumeMounts:
+    - name: nfs-volume
+      mountPath: /tmp
+      subPath:
+  volumes:
+  - name: nfs-volume
+    nfs:
+      server: 192.168.1.104
+      path: "/home/wendi/data/test"
