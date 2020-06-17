@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blackbox-exporter
+  namespace: infr
+  labels:
+    app: blackbox-exporter
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blackbox-exporter
+  template:
+    metadata:
+      labels:
+        app: blackbox-exporter
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: blackbox-exporter
+          defaultMode: 420
+      containers:
+      - name: blackbox-exporter
+        image: zhangwendi/blackbox-exporter:v0.15.1
+        imagePullPolicy: IfNotPresent
+        args:
+        - --config.file=/etc/blackbox_exporter/blackbox.yml
+        - --log.level=info
+        - --web.listen-address=:9115
+        ports:
+        - name: blackbox-port
+          containerPort: 9115
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+        volumeMounts:
+        - name: config
+          mountPath: /etc/blackbox_exporter
+        readinessProbe:
+          tcpSocket:
+            port: 9115
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3

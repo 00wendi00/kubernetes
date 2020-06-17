@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+  namespace: infr
+  labels:
+    grafanak8sapp: "true"
+    app: kube-state-metrics
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+spec:
+  selector:
+    matchLabels:
+      grafanak8sapp: "true"
+      app: kube-state-metrics
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        grafanak8sapp: "true"
+        app: kube-state-metrics
+    spec:
+      containers:
+      - name: kube-state-metrics
+        image: zhangwendi/kube-state-metrics:v1.5.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+      serviceAccountName: kube-state-metrics
+      

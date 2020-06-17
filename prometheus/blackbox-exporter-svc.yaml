@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: blackbox-exporter
+  namespace: infr
+spec:
+  selector:
+    app: blackbox-exporter
+  ports:
+    - name: blackbox-port
+      protocol: TCP
+      port: 9115

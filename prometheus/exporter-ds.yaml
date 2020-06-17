@@ -1,0 +1,49 @@
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: node-exporter
+  namespace: infr
+  labels:
+    daemon: "node-exporter"
+    grafanak8sapp: "true"
+spec:
+  selector:
+    matchLabels:
+      daemon: "node-exporter"
+      grafanak8sapp: "true"
+  template:
+    metadata:
+      name: node-exporter
+      labels:
+        daemon: "node-exporter"
+        grafanak8sapp: "true"
+    spec:
+      volumes:
+      - name: proc
+        hostPath: 
+          path: /proc
+          type: ""
+      - name: sys
+        hostPath:
+          path: /sys
+          type: ""
+      containers:
+      - name: node-exporter
+        image: zhangwendi/node-exporter:v0.15.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - --path.procfs=/host_proc
+        - --path.sysfs=/host_sys
+        ports:
+        - name: node-exporter
+          hostPort: 9100
+          containerPort: 9100
+          protocol: TCP
+        volumeMounts:
+        - name: sys
+          readOnly: true
+          mountPath: /host_sys
+        - name: proc
+          readOnly: true
+          mountPath: /host_proc
+      hostNetwork: true

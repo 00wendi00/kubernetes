@@ -1,0 +1,16 @@
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   annotations:
+#     kubernetes.io/ingress.class: traefik
+#   name: prometheus
+#   namespace: infr
+# spec:
+#   rules:
+#   - host: prometheus.od.com
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: prometheus
+#           servicePort: 9090

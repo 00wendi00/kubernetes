@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: etcd-k8s
+  namespace: infr
+  labels:
+    k8s-app: etcd
+subsets:
+  - addresses:
+      - ip: 192.168.1.105
+        nodeName: wendi-t
+      - ip: 192.168.1.103
+        nodeName: master1
+      - ip: 192.168.2.108
+        nodeName: master2
+    ports:
+      - name: port
+        port: 2379
+        protocol: TCP
